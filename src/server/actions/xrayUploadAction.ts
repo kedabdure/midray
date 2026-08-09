@@ -26,7 +26,7 @@ const ACCEPTED_TYPES = [
   "application/octet-stream",
 ];
 
-const MAX_SIZE_MB = 20;
+const MAX_SIZE_MB = 50;
 const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
 
 // ─── Server Action ────────────────────────────────────────────────────────────
