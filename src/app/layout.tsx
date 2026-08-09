@@ -14,15 +14,15 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Midray — X-Ray Study Management",
-    template: "%s | Midray",
+    default: "Dewa Clinic X-Ray — Study Management",
+    template: "%s | Dewa Clinic X-Ray",
   },
   description:
     "A modern, production-ready platform for managing and reviewing medical imaging studies.",
   keywords: ["radiology", "x-ray", "DICOM", "medical imaging", "study management"],
-  authors: [{ name: "Midray Team" }],
+  authors: [{ name: "Dewa Clinic" }],
   openGraph: {
-    title: "Midray — X-Ray Study Management",
+    title: "Dewa Clinic X-Ray — Study Management",
     description: "Manage and review medical imaging studies with ease.",
     type: "website",
   },

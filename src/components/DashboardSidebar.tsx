@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Logo } from "./Logo";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -40,26 +41,8 @@ export function DashboardSidebar() {
     <aside className="w-64 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col transition-colors">
       {/* Brand */}
       <div className="px-6 py-5 border-b border-slate-200 dark:border-slate-800">
-        <Link href="/dashboard" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-shadow">
-            <svg
-              className="w-4 h-4 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"
-              />
-            </svg>
-          </div>
-          <span className="font-bold text-slate-900 dark:text-white text-sm tracking-tight">
-            Midray
-          </span>
+        <Link href="/dashboard" className="block group">
+          <Logo width={120} height={40} className="transition-opacity group-hover:opacity-80" />
         </Link>
       </div>
 

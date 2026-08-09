@@ -16,15 +16,53 @@ export const metadata: Metadata = {
 interface StatCardProps {
   label: string;
   value: number;
+  icon: "total" | "pending" | "in_progress" | "completed";
   color: string;
   bgColor: string;
 }
 
-function StatCard({ label, value, color, bgColor }: StatCardProps) {
+function StatCard({ label, value, icon, color, bgColor }: StatCardProps) {
+  const iconPaths: Record<StatCardProps["icon"], React.ReactNode> = {
+    total: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.75}
+        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+      />
+    ),
+    pending: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.75}
+        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    ),
+    in_progress: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.75}
+        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+      />
+    ),
+    completed: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.75}
+        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    ),
+  };
+
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 flex items-center gap-4 shadow-sm transition-colors">
       <div className={`w-10 h-10 rounded-xl ${bgColor} flex items-center justify-center shrink-0`}>
-        <span className={`text-lg font-bold ${color}`}>{value}</span>
+        <svg className={`w-5 h-5 ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          {iconPaths[icon]}
+        </svg>
       </div>
       <div>
         <p className="text-2xl font-bold text-slate-900 dark:text-white">{value}</p>
@@ -74,24 +112,28 @@ export default async function DashboardPage() {
             <StatCard
               label="Total Studies"
               value={stats.total}
-              color="text-slate-900 dark:text-white"
+              icon="total"
+              color="text-slate-700 dark:text-slate-200"
               bgColor="bg-slate-100 dark:bg-slate-800"
             />
             <StatCard
               label="Pending"
               value={stats.PENDING}
+              icon="pending"
               color="text-amber-600 dark:text-amber-400"
               bgColor="bg-amber-500/10"
             />
             <StatCard
               label="In Progress"
               value={stats.IN_PROGRESS}
+              icon="in_progress"
               color="text-blue-600 dark:text-blue-400"
               bgColor="bg-blue-500/10"
             />
             <StatCard
               label="Completed"
               value={stats.COMPLETED}
+              icon="completed"
               color="text-emerald-600 dark:text-emerald-400"
               bgColor="bg-emerald-500/10"
             />
