@@ -85,15 +85,15 @@ export default async function DashboardPage() {
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
       {/* ─── Top Bar ─────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-10 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800 px-6 py-4">
+      <header className="sticky top-0 z-10 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-semibold text-slate-900 dark:text-white">
+          <div className="min-w-0 flex-1 mr-3">
+            <h1 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white truncate">
               Welcome back, {session.user.name?.split(" ")[0] ?? "Doctor"}
             </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">{session.user.email}</p>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate">{session.user.email}</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <ThemeToggle />
             <SignOutButton />
           </div>
@@ -101,7 +101,7 @@ export default async function DashboardPage() {
       </header>
 
       {/* ─── Main Content ─────────────────────────────────────────────────── */}
-      <div className="flex-1 px-6 py-8 space-y-8">
+      <div className="flex-1 px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
 
         {/* Stats Grid */}
         <section aria-label="Study statistics">
@@ -142,10 +142,10 @@ export default async function DashboardPage() {
 
         {/* Studies Table */}
         <section aria-label="X-ray studies list">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
             <div>
               <h2 className="text-base font-semibold text-slate-900 dark:text-white">Recent Studies</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
                 {stats.total > 0
                   ? `${stats.total} ${stats.total === 1 ? "study" : "studies"} total`
                   : "No studies yet"}
@@ -156,16 +156,15 @@ export default async function DashboardPage() {
             <Link
               id="btn-add-study"
               href="/dashboard/upload"
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white
-                bg-gradient-to-r from-blue-500 to-violet-600
-                hover:from-blue-600 hover:to-violet-700
-                shadow-lg shadow-blue-500/20
+              className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white
+                bg-green-600 hover:bg-green-700
+                shadow-lg shadow-green-600/20
                 transition-all duration-200 active:scale-[0.98]"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              Add Study
+              <span>Add Study</span>
             </Link>
           </div>
 

@@ -15,7 +15,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <DashboardSidebar />
 
       {/* ─── Main content area ─────────────────────────────────────────── */}
-      <main className="flex-1 overflow-auto" id="main-content">
+      <main className="flex-1 overflow-auto pt-[60px] lg:pt-0" id="main-content">
         {children}
       </main>
     </div>

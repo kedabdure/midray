@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { signIn } from "@/lib/auth-client";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Logo } from "@/components/Logo";
@@ -42,7 +43,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen grid lg:grid-cols-2 bg-slate-50 dark:bg-slate-950 transition-colors">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-green-600 via-green-500 to-emerald-600 dark:from-green-700 dark:via-green-600 dark:to-emerald-700 text-white relative overflow-hidden">
+      <div className="hidden lg:flex flex-col justify-between p-12 bg-linear-to-br from-green-700 via-green-600 to-emerald-700 dark:from-green-800 dark:via-green-700 dark:to-emerald-800 text-white relative overflow-hidden">
         {/* Decorative background pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-20 w-64 h-64 rounded-full bg-white/20 blur-3xl" />
@@ -50,7 +51,13 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10">
-          <Logo width={160} height={55} />
+          <Image
+            src="/logo/logol-dark.png"
+            alt="Dewa Clinic X-Ray"
+            width={160}
+            height={55}
+            priority
+          />
         </div>
 
         <div className="relative z-10 space-y-4">
@@ -68,29 +75,29 @@ export default function LoginPage() {
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="flex items-center justify-center p-8 relative">
+      <div className="flex items-center justify-center p-4 sm:p-8 relative">
         {/* Theme Toggle */}
-        <div className="absolute top-6 right-6 z-20">
+        <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-20">
           <ThemeToggle />
         </div>
 
         {/* Mobile Logo */}
-        <div className="absolute top-8 left-8 lg:hidden">
+        <div className="absolute top-6 sm:top-8 left-4 sm:left-8 lg:hidden">
           <Logo width={120} height={40} />
         </div>
 
         {/* Login Card */}
-        <div className="w-full max-w-md">
-          <div className="mb-8 mt-16 lg:mt-0">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+        <div className="w-full max-w-md px-2 sm:px-0">
+          <div className="mb-6 sm:mb-8 mt-20 sm:mt-16 lg:mt-0">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
               Welcome back
             </h2>
-            <p className="text-slate-600 dark:text-slate-400 mt-2">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2">
               Sign in to access your dashboard
             </p>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 shadow-lg transition-colors">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-lg transition-colors">
             {error && (
               <div className="mb-6 px-4 py-3 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-700 dark:text-red-400 text-sm flex items-start gap-3">
                 <svg className="w-5 h-5 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">

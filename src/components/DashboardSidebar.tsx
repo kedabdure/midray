@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
@@ -31,6 +32,7 @@ const BOTTOM_NAV_ITEMS: NavItemDef[] = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   function isActive({ href, exact }: NavItemDef) {
     if (exact) return pathname === href;
@@ -38,28 +40,73 @@ export function DashboardSidebar() {
   }
 
   return (
-    <aside className="w-64 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col transition-colors">
-      {/* Brand */}
-      <div className="px-6 py-5 border-b border-slate-200 dark:border-slate-800">
-        <Link href="/dashboard" className="block group">
-          <Logo width={120} height={40} className="transition-opacity group-hover:opacity-80" />
+    <>
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between">
+        <Link href="/dashboard">
+          <Logo width={100} height={33} />
         </Link>
+        <button
+          type="button"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          aria-label="Toggle menu"
+        >
+          {isMobileMenuOpen ? (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1" aria-label="Main navigation">
-        {NAV_ITEMS.map((item) => (
-          <NavItem key={item.href} item={item} active={isActive(item)} />
-        ))}
-      </nav>
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-30 bg-black/50"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
 
-      {/* Bottom section */}
-      <div className="px-3 py-4 border-t border-slate-200 dark:border-slate-800 space-y-1">
-        {BOTTOM_NAV_ITEMS.map((item) => (
-          <NavItem key={item.href} item={item} active={isActive(item)} />
-        ))}
-      </div>
-    </aside>
+      {/* Sidebar */}
+      <aside className={`
+        fixed lg:static inset-y-0 left-0 z-40
+        w-64 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col transition-all
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        {/* Brand - Desktop only */}
+        <div className="hidden lg:block px-6 py-5 border-b border-slate-200 dark:border-slate-800">
+          <Link href="/dashboard" className="block group">
+            <Logo width={120} height={40} className="transition-opacity group-hover:opacity-80" />
+          </Link>
+        </div>
+
+        {/* Mobile padding for header */}
+        <div className="lg:hidden h-[60px]" />
+
+        {/* Navigation */}
+        <nav className="flex-1 px-3 py-4 space-y-1" aria-label="Main navigation">
+          {NAV_ITEMS.map((item) => (
+            <div key={item.href} onClick={() => setIsMobileMenuOpen(false)}>
+              <NavItem item={item} active={isActive(item)} />
+            </div>
+          ))}
+        </nav>
+
+        {/* Bottom section */}
+        <div className="px-3 py-4 border-t border-slate-200 dark:border-slate-800 space-y-1">
+          {BOTTOM_NAV_ITEMS.map((item) => (
+            <div key={item.href} onClick={() => setIsMobileMenuOpen(false)}>
+              <NavItem item={item} active={isActive(item)} />
+            </div>
+          ))}
+        </div>
+      </aside>
+    </>
   );
 }
 
