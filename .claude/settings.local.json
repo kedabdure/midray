@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install cornerstone-core cornerstone-wado-image-loader dicom-parser)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

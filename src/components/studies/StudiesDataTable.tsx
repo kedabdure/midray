@@ -22,6 +22,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { ImagePreviewDialog } from "@/components/ImagePreviewDialog";
 
 interface StudiesDataTableProps {
   studies: XrayStudy[];
@@ -61,6 +62,11 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StudyStatus | "ALL">("ALL");
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<{
+    url: string;
+    patientName: string;
+    patientId?: string | null;
+  } | null>(null);
 
   // Filter studies by search query (patientName or patientId) & status
   const filteredStudies = useMemo(() => {
@@ -215,7 +221,7 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
           <TableHeader>
             <TableRow>
               <TableHead className="w-12 sm:w-16" />
-              <TableHead className="min-w-[150px]">Patient</TableHead>
+              <TableHead className="min-w-37.5">Patient</TableHead>
               <TableHead className="hidden sm:table-cell">Status</TableHead>
               <TableHead className="hidden md:table-cell">Date</TableHead>
               <TableHead className="w-12" />
@@ -296,7 +302,7 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
                     {/* Patient Info */}
                     <TableCell>
                       <div className="flex flex-col gap-0.5">
-                        <span className="font-medium text-slate-900 dark:text-slate-200 truncate max-w-[150px] sm:max-w-[200px]">
+                        <span className="font-medium text-slate-900 dark:text-slate-200 truncate max-w-37.5 sm:max-w-50">
                           {study.patientName}
                         </span>
                         {study.patientId && (
@@ -382,7 +388,11 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
                             <>
                               <DropdownMenuItem
                                 onClick={() =>
-                                  window.open(study.imageUrl!, "_blank", "noopener,noreferrer")
+                                  setPreviewImage({
+                                    url: study.imageUrl!,
+                                    patientName: study.patientName,
+                                    patientId: study.patientId,
+                                  })
                                 }
                               >
                                 {/* eye icon */}
@@ -458,6 +468,17 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
           )}
         </div>
       </div>
+
+      {/* Image Preview Dialog */}
+      {previewImage && (
+        <ImagePreviewDialog
+          open={!!previewImage}
+          onOpenChange={(open) => !open && setPreviewImage(null)}
+          imageUrl={previewImage.url}
+          patientName={previewImage.patientName}
+          patientId={previewImage.patientId}
+        />
+      )}
     </div>
   );
 }
