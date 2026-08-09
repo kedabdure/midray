@@ -119,7 +119,7 @@ function NavItem({ item, active }: { item: NavItemDef; active: boolean }) {
       id={`nav-${item.label.toLowerCase()}`}
       className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
         active
-          ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 font-semibold"
+          ? "bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 font-semibold"
           : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60"
       }`}
       aria-current={active ? "page" : undefined}

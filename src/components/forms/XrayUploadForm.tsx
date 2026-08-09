@@ -154,7 +154,7 @@ export function XrayUploadForm() {
           disabled={isUploading}
           placeholder="e.g. PT-00123 or MRN-456"
           className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm border border-slate-200 dark:border-transparent
-            focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all
+            focus:outline-none focus:ring-2 focus:ring-green-500/50 transition-all
             disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
@@ -172,7 +172,7 @@ export function XrayUploadForm() {
           disabled={isUploading}
           placeholder="Full name"
           className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm border border-slate-200 dark:border-transparent
-            focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all
+            focus:outline-none focus:ring-2 focus:ring-green-500/50 transition-all
             disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
@@ -215,8 +215,8 @@ export function XrayUploadForm() {
               </div>
             ) : (
               /* DICOM placeholder */
-              <div className="w-14 h-14 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
-                <svg className="w-7 h-7 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <div className="w-14 h-14 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0">
+                <svg className="w-7 h-7 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
@@ -252,7 +252,7 @@ export function XrayUploadForm() {
             aria-label="Click or drag and drop a file to upload"
             className={`relative flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed px-6 py-10 cursor-pointer transition-all duration-200 ${
               isDragging
-                ? "border-blue-500/60 bg-blue-500/5"
+                ? "border-green-500/60 bg-green-500/5"
                 : "border-slate-300 dark:border-slate-700/60 bg-slate-50/50 dark:bg-slate-800/20 hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-100/50 dark:hover:bg-slate-800/40"
             } disabled:opacity-50`}
           >
@@ -291,11 +291,10 @@ export function XrayUploadForm() {
         type="submit"
         disabled={isUploading || !selectedFile}
         className="w-full py-2.5 px-4 rounded-xl font-medium text-sm text-white
-          bg-gradient-to-r from-blue-500 to-violet-600
-          hover:from-blue-600 hover:to-violet-700
-          focus:outline-none focus:ring-2 focus:ring-blue-500
+          bg-green-600 hover:bg-green-700
+          focus:outline-none focus:ring-2 focus:ring-green-500
           disabled:opacity-50 disabled:cursor-not-allowed
-          transition-all shadow-md shadow-blue-500/20 active:scale-[0.99]"
+          transition-all shadow-md shadow-green-600/20 active:scale-[0.99]"
       >
         {isUploading ? (
           <span className="flex items-center justify-center gap-2">

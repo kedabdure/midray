@@ -127,8 +127,8 @@ export default async function DashboardPage() {
               label="In Progress"
               value={stats.IN_PROGRESS}
               icon="in_progress"
-              color="text-blue-600 dark:text-blue-400"
-              bgColor="bg-blue-500/10"
+              color="text-green-600 dark:text-green-400"
+              bgColor="bg-green-500/10"
             />
             <StatCard
               label="Completed"

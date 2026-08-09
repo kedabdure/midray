@@ -8,20 +8,20 @@ interface StatusBadgeProps {
 
 const STATUS_STYLES: Record<StudyStatus, string> = {
   PENDING:
-    "bg-amber-500/10 text-amber-400 border-amber-500/20 ring-amber-500/10",
+    "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 ring-amber-500/10",
   IN_PROGRESS:
-    "bg-blue-500/10 text-blue-400 border-blue-500/20 ring-blue-500/10",
+    "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20 ring-green-500/10",
   COMPLETED:
-    "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 ring-emerald-500/10",
+    "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 ring-emerald-500/10",
   ARCHIVED:
-    "bg-slate-500/10 text-slate-400 border-slate-500/20 ring-slate-500/10",
+    "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20 ring-slate-500/10",
 };
 
 const STATUS_DOTS: Record<StudyStatus, string> = {
-  PENDING: "bg-amber-400",
-  IN_PROGRESS: "bg-blue-400 animate-pulse",
-  COMPLETED: "bg-emerald-400",
-  ARCHIVED: "bg-slate-400",
+  PENDING: "bg-amber-500",
+  IN_PROGRESS: "bg-green-500 animate-pulse",
+  COMPLETED: "bg-emerald-500",
+  ARCHIVED: "bg-slate-500",
 };
 
 export function StatusBadge({ status, className = "" }: StatusBadgeProps) {
