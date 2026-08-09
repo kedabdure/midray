@@ -131,7 +131,7 @@ export function DropdownMenuContent({
           : { left: coords.left }),
         zIndex: 9999,
       }}
-      className={`min-w-[11rem] rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/15 dark:shadow-slate-900/50 py-1 text-sm ${className}`}
+      className={`min-w-44 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/15 dark:shadow-slate-900/50 py-1 text-sm ${className}`}
     >
       {children}
     </div>

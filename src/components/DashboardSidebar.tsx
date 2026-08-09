@@ -86,7 +86,7 @@ export function DashboardSidebar() {
         </div>
 
         {/* Mobile padding for header */}
-        <div className="lg:hidden h-[60px]" />
+        <div className="lg:hidden h-15" />
 
         {/* Navigation */}
         <nav className="flex-1 px-3 py-4 space-y-1" aria-label="Main navigation">
