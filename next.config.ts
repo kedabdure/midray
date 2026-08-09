@@ -1,9 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Increase body size limit for Server Actions (file uploads)
-  serverActions: {
-    bodySizeLimit: '50mb', // Allow up to 50MB for X-ray image uploads
+  // Experimental features
+  experimental: {
+    // Increase body size limit for Server Actions (file uploads)
+    serverActions: {
+      bodySizeLimit: '50mb', // Allow up to 50MB for X-ray image uploads
+    },
   },
 
   // Allow images from ImageKit CDN
