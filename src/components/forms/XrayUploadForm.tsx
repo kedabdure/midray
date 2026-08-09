@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { uploadStudyAction } from "@/server/actions/xrayUploadAction";
+import ImageKit from "imagekit-javascript";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -26,13 +26,23 @@ function formatBytes(bytes: number): string {
 
 export function XrayUploadForm() {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
   const [status, setStatus] = useState<FormStatus>({ type: "idle" });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imagekitRef = useRef<ImageKit | null>(null);
 
-  const isUploading = isPending || status.type === "uploading";
+  // Initialize ImageKit client
+  useEffect(() => {
+    if (!imagekitRef.current) {
+      imagekitRef.current = new ImageKit({
+        publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!,
+        urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT!,
+      });
+    }
+  }, []);
+
+  const isUploading = status.type === "uploading";
 
   // ── File selection ──────────────────────────────────────────────────────────
 
@@ -77,46 +87,94 @@ export function XrayUploadForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (isUploading || !selectedFile) return;
+    if (isUploading || !selectedFile || !imagekitRef.current) return;
 
     setStatus({ type: "uploading" });
 
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const patientId = (form.elements.namedItem("patientId") as HTMLInputElement).value;
+    const patientName = (form.elements.namedItem("patientName") as HTMLInputElement).value;
+    const notes = (form.elements.namedItem("notes") as HTMLTextAreaElement).value;
 
-    // Ensure file is in FormData
-    if (!formData.has("file")) {
-      formData.set("file", selectedFile);
-    }
+    try {
+      // Get authentication parameters
+      const authResponse = await fetch("/api/imagekit-auth");
+      const authParams = await authResponse.json();
 
-    startTransition(async () => {
-      try {
-        const result = await uploadStudyAction(formData);
+      // Upload directly to ImageKit from browser
+      const uploadOptions = {
+        file: selectedFile,
+        fileName: selectedFile.name,
+        folder: "/x-ray-studies",
+        useUniqueFileName: true,
+        tags: [patientId],
+        signature: authParams.signature,
+        expire: authParams.expire,
+        token: authParams.token,
+      };
 
-        if (result.success) {
-          setStatus({ type: "success", message: "Study uploaded successfully!" });
-          setSelectedFile(null);
-          if (fileInputRef.current) fileInputRef.current.value = "";
-          // Redirect to dashboard after short delay so user sees the success message
-          setTimeout(() => router.push("/dashboard"), 1500);
-        } else {
-          setStatus({ type: "error", message: result.error });
+      imagekitRef.current.upload(uploadOptions, async (err: unknown, result: unknown) => {
+        if (err) {
+          console.error("[ImageKit] Upload error:", err);
+          setStatus({
+            type: "error",
+            message: err instanceof Error ? err.message : "Upload failed. Please try again.",
+          });
+          return;
         }
-      } catch (error) {
-        console.error("Upload error:", error);
-        setStatus({ type: "error", message: "Upload failed. Please try again." });
-      }
-    });
+
+        console.log("[ImageKit] Upload success:", result);
+
+        try {
+          // Save metadata to database
+          const uploadResult = result as { url: string; fileId: string };
+          const dbResponse = await fetch("/api/save-study", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              imageUrl: uploadResult.url,
+              fileId: uploadResult.fileId,
+              patientId,
+              patientName,
+              notes: notes || undefined,
+            }),
+          });
+
+          const dbResult = await dbResponse.json();
+
+          if (dbResult.success) {
+            setStatus({ type: "success", message: "Study uploaded successfully!" });
+            setSelectedFile(null);
+            if (fileInputRef.current) fileInputRef.current.value = "";
+            form.reset();
+
+            setTimeout(() => {
+              router.push("/dashboard");
+              router.refresh();
+            }, 1500);
+          } else {
+            setStatus({
+              type: "error",
+              message: dbResult.error || "Failed to save to database",
+            });
+          }
+        } catch (dbError) {
+          console.error("[Database] Save error:", dbError);
+          setStatus({
+            type: "error",
+            message: dbError instanceof Error ? `Database save failed: ${dbError.message}` : "Database save failed",
+          });
+        }
+      });
+    } catch (error) {
+      console.error("[Upload] Initialization error:", error);
+      setStatus({
+        type: "error",
+        message: error instanceof Error ? error.message : "Upload initialization failed",
+      });
+    }
   }
 
-  // ── Image preview ───────────────────────────────────────────────────────────
-
-  const isImageFile =
-    selectedFile &&
-    (selectedFile.type.startsWith("image/") ||
-      selectedFile.name.toLowerCase().endsWith(".jpg") ||
-      selectedFile.name.toLowerCase().endsWith(".png"));
-
-  const previewUrl = isImageFile ? URL.createObjectURL(selectedFile) : null;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
@@ -143,6 +201,18 @@ export function XrayUploadForm() {
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
           </svg>
           {status.message}
+        </div>
+      )}
+
+      {status.type === "uploading" && (
+        <div className="px-4 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
+          <div className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
+            <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <span className="font-medium">Uploading to ImageKit...</span>
+          </div>
         </div>
       )}
 
@@ -194,7 +264,7 @@ export function XrayUploadForm() {
           disabled={isUploading}
           placeholder="Clinical notes, findings…"
           className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm border border-slate-200 dark:border-transparent
-            focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all resize-none
+            focus:outline-none focus:ring-2 focus:ring-green-500/50 transition-all resize-none
             disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
@@ -206,26 +276,13 @@ export function XrayUploadForm() {
         </label>
 
         {selectedFile ? (
-          /* ── Selected File Preview ──────────────────────────────────── */
+          /* ── Selected File Info ──────────────────────────────────────── */
           <div className="rounded-xl border border-slate-200 dark:border-slate-700/60 bg-slate-50 dark:bg-slate-800/40 p-4 flex items-center gap-4">
-            {previewUrl ? (
-              <div className="w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-900">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={previewUrl}
-                  alt="Preview"
-                  className="w-full h-full object-cover"
-                  onLoad={() => URL.revokeObjectURL(previewUrl)}
-                />
-              </div>
-            ) : (
-              /* DICOM placeholder */
-              <div className="w-14 h-14 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0">
-                <svg className="w-7 h-7 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-            )}
+            <div className="w-14 h-14 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0">
+              <svg className="w-7 h-7 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
 
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-slate-900 dark:text-slate-200 truncate">{selectedFile.name}</p>
@@ -271,7 +328,7 @@ export function XrayUploadForm() {
                 {isDragging ? "Drop file here" : "Click to browse or drag & drop"}
               </p>
               <p className="text-xs text-slate-500 mt-1">
-                DICOM (.dcm), PNG, JPEG — max 20 MB
+                DICOM (.dcm), PNG, JPEG — max 50 MB
               </p>
             </div>
           </div>
@@ -307,7 +364,7 @@ export function XrayUploadForm() {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            Uploading…
+            Uploading...
           </span>
         ) : (
           "Upload Study"
