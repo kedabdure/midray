@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ─── Shadcn UI CSS Variables (Light Mode) ────────────────────────────────── */
 :root {
   --background: 0 0% 100%;

@@ -17,18 +17,18 @@ import { StudyStatus } from "@prisma/client";
 
 const CreateStudySchema = z.object({
   patientName: z.string().min(2, "Patient name must be at least 2 characters").max(100),
-  modality: z.string().min(1, "Modality is required").max(50),
+  patientId: z.string().max(50).optional(),
   status: z.nativeEnum(StudyStatus).optional(),
   imageUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
   notes: z.string().max(1000).optional(),
 });
 
 const UpdateStudySchema = CreateStudySchema.partial().extend({
-  id: z.string().cuid("Invalid study ID"),
+  id: z.string().min(1, "Study ID is required"),
 });
 
 const DeleteStudySchema = z.object({
-  id: z.string().cuid("Invalid study ID"),
+  id: z.string().min(1, "Study ID is required"),
 });
 
 // ─── Actions ─────────────────────────────────────────────────────────────────

@@ -1,6 +1,7 @@
 import { prisma } from "../../../prisma/db";
-import type { CreateStudyInput, UpdateStudyInput } from "@/types";
+import type { CreateStudyInput, UpdateStudyInput, UploadStudyInput } from "@/types";
 import { StudyStatus } from "@prisma/client";
+import { imagekit } from "@/lib/imagekit";
 
 /**
  * Fetch all XrayStudy records for a given user, ordered newest first.
@@ -30,9 +31,50 @@ export async function createStudy(userId: string, data: CreateStudyInput) {
     data: {
       userId,
       patientName: data.patientName,
-      modality: data.modality,
+      patientId: data.patientId,
       status: data.status ?? StudyStatus.PENDING,
       imageUrl: data.imageUrl,
+      imagekitFileId: data.imagekitFileId,
+      notes: data.notes,
+    },
+  });
+}
+
+/**
+ * Upload a file buffer to ImageKit and create an XrayStudy record in one step.
+ * Accepts the raw File from FormData, converts to Buffer server-side.
+ */
+export async function uploadAndCreateStudy(
+  userId: string,
+  file: File,
+  data: UploadStudyInput
+) {
+  // Convert browser File to Node Buffer for ImageKit Node SDK
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  // Sanitise filename — replace spaces, keep extension
+  const safeName = file.name.replace(/\s+/g, "_");
+  const folder = `/midray/studies/${userId}`;
+
+  // Upload to ImageKit (server-side — private key never hits client)
+  const uploadResult = await imagekit.upload({
+    file: buffer,
+    fileName: safeName,
+    folder,
+    useUniqueFileName: true,
+    tags: [data.patientId].filter(Boolean) as string[],
+  });
+
+  // Persist the record in PostgreSQL
+  return prisma.xrayStudy.create({
+    data: {
+      userId,
+      patientName: data.patientName,
+      patientId: data.patientId,
+      status: StudyStatus.PENDING,
+      imageUrl: uploadResult.url,
+      imagekitFileId: uploadResult.fileId,
       notes: data.notes,
     },
   });

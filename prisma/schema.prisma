@@ -82,14 +82,15 @@ enum StudyStatus {
 }
 
 model XrayStudy {
-  id          String      @id @default(cuid())
-  patientName String
-  status      StudyStatus @default(PENDING)
-  modality    String      // e.g. "Chest X-Ray", "CT Scan", "MRI", "Ultrasound"
-  imageUrl    String?
-  notes       String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id              String      @id @default(cuid())
+  patientName     String
+  patientId       String?     // Optional patient identifier / MRN
+  status          StudyStatus @default(PENDING)
+  imageUrl        String?     // Public ImageKit CDN URL
+  imagekitFileId  String?     // ImageKit internal file ID (for deletion)
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

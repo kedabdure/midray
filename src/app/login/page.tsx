@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -38,7 +39,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-slate-950">
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors">
+      {/* Top Right Theme Toggle */}
+      <div className="absolute top-4 right-4 z-20">
+        <ThemeToggle />
+      </div>
+
       {/* Background ambient glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-blue-500/10 blur-3xl animate-pulse" />
@@ -65,13 +71,13 @@ export default function LoginPage() {
               />
             </svg>
           </div>
-          <h1 className="text-xl font-bold text-white tracking-tight">Midray</h1>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Midray</h1>
         </div>
 
-        {/* Form Box - Borderless backdrop */}
-        <div className="bg-slate-900/90 backdrop-blur-xl rounded-2xl p-6 shadow-2xl shadow-black/60">
+        {/* Form Box */}
+        <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl dark:shadow-2xl dark:shadow-black/60 transition-colors">
           {error && (
-            <div className="mb-4 px-3.5 py-2.5 rounded-xl bg-red-500/10 text-red-400 text-sm flex items-start gap-2">
+            <div className="mb-4 px-3.5 py-2.5 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 text-sm flex items-start gap-2">
               <svg className="w-4 h-4 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
@@ -81,7 +87,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div>
-              <label htmlFor="email" className="block text-xs font-medium text-slate-400 mb-1">
+              <label htmlFor="email" className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
                 Email
               </label>
               <input
@@ -92,12 +98,12 @@ export default function LoginPage() {
                 placeholder="admin@dewaclinic.com"
                 required
                 autoComplete="email"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm border border-slate-200 dark:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-xs font-medium text-slate-400 mb-1">
+              <label htmlFor="password" className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
                 Password
               </label>
               <input
@@ -108,7 +114,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 required
                 autoComplete="current-password"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/80 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm border border-slate-200 dark:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
               />
             </div>
 

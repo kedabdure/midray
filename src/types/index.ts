@@ -25,9 +25,17 @@ export type ActionResponse<T = undefined> =
 
 export type CreateStudyInput = {
   patientName: string;
-  modality: string;
+  patientId?: string;
   status?: StudyStatus;
   imageUrl?: string;
+  imagekitFileId?: string;
+  notes?: string;
+};
+
+// Input type for the file-upload Server Action
+export type UploadStudyInput = {
+  patientId: string;
+  patientName: string;
   notes?: string;
 };
 
@@ -54,17 +62,3 @@ export const STUDY_STATUS_COLORS: Record<
   ARCHIVED: "destructive",
 };
 
-// ─── Modality Options ─────────────────────────────────────────────────────────
-
-export const MODALITY_OPTIONS = [
-  "Chest X-Ray",
-  "CT Scan",
-  "MRI",
-  "Ultrasound",
-  "PET Scan",
-  "Fluoroscopy",
-  "Mammography",
-  "Nuclear Medicine",
-] as const;
-
-export type Modality = (typeof MODALITY_OPTIONS)[number];
