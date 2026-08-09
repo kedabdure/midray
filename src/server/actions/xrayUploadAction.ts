@@ -43,8 +43,11 @@ export async function uploadStudyAction(
   formData: FormData
 ): Promise<ActionResponse<XrayStudy>> {
   try {
+    console.log("[uploadStudyAction] Starting upload...");
+
     // Auth guard
     const session = await requireAuth();
+    console.log("[uploadStudyAction] Auth OK, user:", session.user.id);
 
     // Extract & validate text fields
     const rawFields = {
@@ -53,8 +56,11 @@ export async function uploadStudyAction(
       notes: formData.get("notes") ?? undefined,
     };
 
+    console.log("[uploadStudyAction] Raw fields:", rawFields);
+
     const parsed = UploadStudySchema.safeParse(rawFields);
     if (!parsed.success) {
+      console.error("[uploadStudyAction] Validation error:", parsed.error);
       return {
         success: false,
         error: parsed.error.issues.map((e) => e.message).join(", "),
@@ -63,16 +69,20 @@ export async function uploadStudyAction(
 
     // Extract & validate file
     const file = formData.get("file");
+    console.log("[uploadStudyAction] File from FormData:", file ? `${(file as File).name} (${(file as File).size} bytes)` : "null");
 
     if (!file || !(file instanceof File)) {
+      console.error("[uploadStudyAction] No file or not File instance");
       return { success: false, error: "Please select a file to upload." };
     }
 
     if (file.size === 0) {
+      console.error("[uploadStudyAction] File size is 0");
       return { success: false, error: "The selected file is empty." };
     }
 
     if (file.size > MAX_SIZE_BYTES) {
+      console.error(`[uploadStudyAction] File too large: ${file.size} > ${MAX_SIZE_BYTES}`);
       return {
         success: false,
         error: `File too large. Maximum size is ${MAX_SIZE_MB} MB.`,
@@ -84,14 +94,19 @@ export async function uploadStudyAction(
     const isAcceptedType = ACCEPTED_TYPES.includes(file.type) || isDicomByExtension;
 
     if (!isAcceptedType) {
+      console.error("[uploadStudyAction] Unsupported file type:", file.type);
       return {
         success: false,
         error: "Unsupported file type. Please upload a DICOM, PNG, or JPEG file.",
       };
     }
 
+    console.log("[uploadStudyAction] Starting ImageKit upload...");
+
     // Upload to ImageKit + create DB record
     const study = await uploadAndCreateStudy(session.user.id, file, parsed.data);
+
+    console.log("[uploadStudyAction] Upload successful, study ID:", study.id);
 
     revalidatePath("/dashboard");
 
@@ -99,7 +114,7 @@ export async function uploadStudyAction(
   } catch (error) {
     // Let Next.js redirect errors propagate
     if (error instanceof Error && error.message === "NEXT_REDIRECT") throw error;
-    console.error("[uploadStudyAction]", error);
-    return { success: false, error: "Upload failed. Please try again." };
+    console.error("[uploadStudyAction] Error:", error);
+    return { success: false, error: `Upload failed: ${error instanceof Error ? error.message : "Unknown error"}` };
   }
 }

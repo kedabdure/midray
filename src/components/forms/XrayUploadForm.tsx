@@ -77,28 +77,33 @@ export function XrayUploadForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (isUploading) return;
+    if (isUploading || !selectedFile) return;
 
     setStatus({ type: "uploading" });
 
     const formData = new FormData(e.currentTarget);
 
-    // Append selected file if dragged (may not be in native FormData)
-    if (selectedFile && !formData.get("file")) {
+    // Ensure file is in FormData
+    if (!formData.has("file")) {
       formData.set("file", selectedFile);
     }
 
     startTransition(async () => {
-      const result = await uploadStudyAction(formData);
+      try {
+        const result = await uploadStudyAction(formData);
 
-      if (result.success) {
-        setStatus({ type: "success", message: "Study uploaded successfully!" });
-        setSelectedFile(null);
-        if (fileInputRef.current) fileInputRef.current.value = "";
-        // Redirect to dashboard after short delay so user sees the success message
-        setTimeout(() => router.push("/dashboard"), 1500);
-      } else {
-        setStatus({ type: "error", message: result.error });
+        if (result.success) {
+          setStatus({ type: "success", message: "Study uploaded successfully!" });
+          setSelectedFile(null);
+          if (fileInputRef.current) fileInputRef.current.value = "";
+          // Redirect to dashboard after short delay so user sees the success message
+          setTimeout(() => router.push("/dashboard"), 1500);
+        } else {
+          setStatus({ type: "error", message: result.error });
+        }
+      } catch (error) {
+        console.error("Upload error:", error);
+        setStatus({ type: "error", message: "Upload failed. Please try again." });
       }
     });
   }
