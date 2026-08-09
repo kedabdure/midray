@@ -20,7 +20,7 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const { data, error } = await signIn.email({
+      const { error } = await signIn.email({
         email,
         password,
         callbackURL: "/dashboard",
