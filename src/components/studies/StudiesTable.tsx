@@ -74,11 +74,16 @@ export function StudiesTable({ studies }: StudiesTableProps) {
               <th scope="col" className="w-16 px-4 py-3.5" aria-label="Image preview" />
               <th
                 scope="col"
+                className="text-left px-4 py-3.5 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider hidden lg:table-cell"
+              >
+                Patient ID
+              </th>
+              <th
+                scope="col"
                 className="text-left px-4 py-3.5 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider"
               >
-                Patient
+                Name
               </th>
-
               <th
                 scope="col"
                 className="text-left px-4 py-3.5 text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider"
@@ -159,20 +164,21 @@ export function StudiesTable({ studies }: StudiesTableProps) {
                   )}
                 </td>
 
-                {/* Patient */}
-                <td className="px-4 py-3">
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-medium text-slate-900 dark:text-slate-200 truncate max-w-40">
-                      {study.patientName}
+                {/* Patient ID - Desktop only */}
+                <td className="px-4 py-3 hidden lg:table-cell">
+                  {study.patientId && (
+                    <span className="text-sm text-slate-600 dark:text-slate-400 font-mono">
+                      {study.patientId}
                     </span>
-                    {study.patientId && (
-                      <span className="text-xs text-slate-500 font-mono">
-                        {study.patientId}
-                      </span>
-                    )}
-                  </div>
+                  )}
                 </td>
 
+                {/* Name */}
+                <td className="px-4 py-3">
+                  <span className="font-medium text-slate-900 dark:text-slate-200 truncate max-w-40 block">
+                    {study.patientName}
+                  </span>
+                </td>
                 {/* Status */}
                 <td className="px-4 py-3">
                   <StatusBadge status={study.status} />

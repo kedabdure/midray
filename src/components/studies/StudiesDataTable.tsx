@@ -130,9 +130,9 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
   return (
     <div className="space-y-4">
       {/* ─── Top Toolbar ────────────────────────────────────────────────── */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-row items-center justify-between gap-3">
         {/* Search Input */}
-        <div className="relative w-full sm:max-w-md">
+        <div className="relative w-full sm:max-w-xs">
           <svg
             className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 pointer-events-none"
             fill="none"
@@ -168,8 +168,8 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
           )}
         </div>
 
-        {/* Right controls */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        {/* Status Filter Pills and Add Study Button */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
           {/* Status Filter Pills */}
           <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 text-xs overflow-x-auto">
             {(["ALL", "PENDING", "IN_PROGRESS", "COMPLETED"] as const).map((st) => (
@@ -215,7 +215,8 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
           <TableHeader>
             <TableRow>
               <TableHead className="w-12 sm:w-16" />
-              <TableHead className="min-w-37.5">Patient</TableHead>
+              <TableHead className="hidden lg:table-cell">Patient ID</TableHead>
+              <TableHead className="min-w-37.5">Name</TableHead>
               <TableHead className="hidden sm:table-cell">Status</TableHead>
               <TableHead className="hidden md:table-cell">Date</TableHead>
               <TableHead className="w-12" />
@@ -225,7 +226,7 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
           <TableBody>
             {filteredStudies.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-44 text-center">
+                <TableCell colSpan={6} className="h-44 text-center">
                   <div className="flex flex-col items-center justify-center">
                     <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-3">
                       <svg
@@ -314,18 +315,22 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
                         </div>
                       )}
                     </TableCell>
+                    
+                    {/* Patient ID - Desktop only */}
+                    <TableCell className="hidden lg:table-cell">
+                      {study.patientId && (
+                        <span className="text-sm text-slate-600 dark:text-slate-400 font-mono">
+                          {study.patientId}
+                        </span>
+                      )}
+                    </TableCell>
 
-                    {/* Patient Info */}
+                    {/* Name */}
                     <TableCell>
                       <div className="flex flex-col gap-0.5">
                         <span className="font-medium text-slate-900 dark:text-slate-200 truncate max-w-37.5 sm:max-w-50">
                           {study.patientName}
                         </span>
-                        {study.patientId && (
-                          <span className="text-xs text-slate-500 font-mono">
-                            {study.patientId}
-                          </span>
-                        )}
                         {/* Show status on mobile */}
                         <div className="sm:hidden mt-1">
                           <StatusBadge status={study.status} />
