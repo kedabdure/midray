@@ -269,11 +269,17 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
 
                 return (
                   <TableRow key={study.id}>
-                    {/* Thumbnail */}
+                    {/* Thumbnail - Clickable */}
                     <TableCell>
-                      <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 shrink-0 flex items-center justify-center">
-                        {study.imageUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
+                      {study.imageUrl ? (
+                        <a
+                          href={study.imageUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 hover:border-green-500 dark:hover:border-green-500 shrink-0 flex items-center justify-center transition-all cursor-pointer"
+                          aria-label={`View X-ray for ${study.patientName}`}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={buildThumbnailUrl(study.imageUrl)}
                             alt={`X-ray for ${study.patientName}`}
@@ -294,7 +300,9 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
                               }
                             }}
                           />
-                        ) : (
+                        </a>
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 shrink-0 flex items-center justify-center">
                           <svg
                             className="w-5 h-5 text-slate-400 dark:text-slate-600"
                             fill="none"
@@ -309,8 +317,8 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
                               d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                             />
                           </svg>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </TableCell>
 
                     {/* Patient Info */}

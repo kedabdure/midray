@@ -4,7 +4,6 @@ import { useState } from "react";
 import type { XrayStudy } from "@/types";
 import { StatusBadge } from "./StatusBadge";
 import { deleteStudyAction } from "@/server/actions/studyActions";
-import { ImagePreviewDialog } from "@/components/ImagePreviewDialog";
 
 interface StudiesTableProps {
   studies: XrayStudy[];
@@ -23,7 +22,6 @@ function buildThumbnailUrl(imageUrl: string): string {
 
 export function StudiesTable({ studies }: StudiesTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [previewStudy, setPreviewStudy] = useState<XrayStudy | null>(null);
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this study?")) return;
@@ -109,11 +107,17 @@ export function StudiesTable({ studies }: StudiesTableProps) {
                 key={study.id}
                 className="group bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors duration-150"
               >
-                {/* Thumbnail */}
+                {/* Thumbnail - Clickable */}
                 <td className="px-4 py-3">
-                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 shrink-0 flex items-center justify-center">
-                    {study.imageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
+                  {study.imageUrl ? (
+                    <a
+                      href={study.imageUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 hover:border-green-500 dark:hover:border-green-500 shrink-0 flex items-center justify-center transition-all cursor-pointer"
+                      aria-label={`View X-ray for ${study.patientName}`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={buildThumbnailUrl(study.imageUrl)}
                         alt={`X-ray for ${study.patientName}`}
@@ -134,7 +138,9 @@ export function StudiesTable({ studies }: StudiesTableProps) {
                           }
                         }}
                       />
-                    ) : (
+                    </a>
+                  ) : (
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 shrink-0 flex items-center justify-center">
                       <svg
                         className="w-5 h-5 text-slate-400 dark:text-slate-600"
                         fill="none"
@@ -149,8 +155,8 @@ export function StudiesTable({ studies }: StudiesTableProps) {
                           d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                         />
                       </svg>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </td>
 
                 {/* Patient */}
@@ -187,17 +193,18 @@ export function StudiesTable({ studies }: StudiesTableProps) {
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                     {study.imageUrl && (
-                      <button
+                      <a
                         id={`btn-view-${study.id}`}
-                        type="button"
-                        onClick={() => setPreviewStudy(study)}
+                        href={study.imageUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white
                           bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600
                           transition-all duration-150"
                         aria-label={`View image for ${study.patientName}`}
                       >
                         Preview
-                      </button>
+                      </a>
                     )}
                     <button
                       id={`btn-delete-${study.id}`}
@@ -223,17 +230,6 @@ export function StudiesTable({ studies }: StudiesTableProps) {
       <div className="px-5 py-3 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500">
         Showing {studies.length} {studies.length === 1 ? "study" : "studies"}
       </div>
-
-      {/* Image Preview Dialog */}
-      {previewStudy && previewStudy.imageUrl && (
-        <ImagePreviewDialog
-          open={!!previewStudy}
-          onOpenChange={(open) => !open && setPreviewStudy(null)}
-          imageUrl={previewStudy.imageUrl}
-          patientName={previewStudy.patientName}
-          patientId={previewStudy.patientId}
-        />
-      )}
     </div>
   );
 }
