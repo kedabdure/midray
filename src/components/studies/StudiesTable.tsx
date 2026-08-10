@@ -114,7 +114,7 @@ export function StudiesTable({ studies }: StudiesTableProps) {
                       href={study.imageUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 hover:border-green-500 dark:hover:border-green-500 shrink-0 flex items-center justify-center transition-all cursor-pointer"
+                      className="block w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 hover:border-green-500 dark:hover:border-green-500 shrink-0 items-center justify-center transition-all cursor-pointer"
                       aria-label={`View X-ray for ${study.patientName}`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -162,7 +162,7 @@ export function StudiesTable({ studies }: StudiesTableProps) {
                 {/* Patient */}
                 <td className="px-4 py-3">
                   <div className="flex flex-col gap-0.5">
-                    <span className="font-medium text-slate-900 dark:text-slate-200 truncate max-w-[160px]">
+                    <span className="font-medium text-slate-900 dark:text-slate-200 truncate max-w-40">
                       {study.patientName}
                     </span>
                     {study.patientId && (

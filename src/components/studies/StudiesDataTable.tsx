@@ -22,7 +22,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { ImagePreviewDialog } from "@/components/ImagePreviewDialog";
 
 interface StudiesDataTableProps {
   studies: XrayStudy[];
@@ -62,11 +61,6 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StudyStatus | "ALL">("ALL");
   const [loadingId, setLoadingId] = useState<string | null>(null);
-  const [previewImage, setPreviewImage] = useState<{
-    url: string;
-    patientName: string;
-    patientId?: string | null;
-  } | null>(null);
 
   // Filter studies by search query (patientName or patientId) & status
   const filteredStudies = useMemo(() => {
@@ -276,7 +270,7 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
                           href={study.imageUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 hover:border-green-500 dark:hover:border-green-500 shrink-0 flex items-center justify-center transition-all cursor-pointer"
+                          className="block w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 hover:border-green-500 dark:hover:border-green-500 shrink-0 items-center justify-center transition-all cursor-pointer"
                           aria-label={`View X-ray for ${study.patientName}`}
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -409,13 +403,7 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
                           {study.imageUrl && (
                             <>
                               <DropdownMenuItem
-                                onClick={() =>
-                                  setPreviewImage({
-                                    url: study.imageUrl!,
-                                    patientName: study.patientName,
-                                    patientId: study.patientId,
-                                  })
-                                }
+                                onClick={() => window.open(study.imageUrl!, '_blank', 'noopener,noreferrer')}
                               >
                                 {/* eye icon */}
                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -490,17 +478,6 @@ export function StudiesDataTable({ studies }: StudiesDataTableProps) {
           )}
         </div>
       </div>
-
-      {/* Image Preview Dialog */}
-      {previewImage && (
-        <ImagePreviewDialog
-          open={!!previewImage}
-          onOpenChange={(open) => !open && setPreviewImage(null)}
-          imageUrl={previewImage.url}
-          patientName={previewImage.patientName}
-          patientId={previewImage.patientId}
-        />
-      )}
     </div>
   );
 }
